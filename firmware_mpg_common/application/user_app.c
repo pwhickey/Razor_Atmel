@@ -89,6 +89,15 @@ Promises:
 void UserAppInitialize(void)
 {
   
+  LedOff(WHITE);
+  LedOff(PURPLE);
+  LedOff(BLUE);
+  LedOff(CYAN);
+  LedOff(GREEN);
+  LedOff(YELLOW);
+  LedOff(ORANGE);
+  LedOff(RED);
+  
   /* If good initialization, set state to Idle */
   if( 1 )
   {
@@ -119,7 +128,41 @@ Promises:
 */
 void UserAppRunActiveState(void)
 {
+  static LedRateType aeBlinkRate[] = {LED_1HZ, LED_2HZ, LED_4HZ, LED_8HZ};
+  static u8 u8BlinkRateIndex = 0;
+  static bool bLedBlink = FALSE;
+  
   UserApp_StateMachine();
+  
+  if(IsButtonPressed(BUTTON0))
+     LedOn(PURPLE);
+  else
+    LedOff(PURPLE);
+  if(IsButtonPressed(BUTTON1))
+     LedOn(BLUE);
+  else
+    LedOff(BLUE);
+  
+  if(WasButtonPressed(BUTTON2)){
+    if(!bLedBlink){
+      bLedBlink = TRUE;
+      LedBlink(YELLOW, aeBlinkRate[u8BlinkRateIndex]);
+      ButtonAcknowledge(BUTTON2);
+    }
+    else if(bLedBlink){
+      u8BlinkRateIndex++;
+      ButtonAcknowledge(BUTTON2);
+      
+      if(u8BlinkRateIndex < 4){
+        LedBlink(YELLOW, aeBlinkRate[u8BlinkRateIndex]);
+      }
+      else{
+        u8BlinkRateIndex = 0;
+        LedOff(YELLOW);
+        bLedBlink = FALSE;
+      }
+    }
+  }
 
 } /* end UserAppRunActiveState */
 
